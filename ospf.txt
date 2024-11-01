@@ -1,0 +1,389 @@
+Алгоритм маршрутизации с учетом состояния линии OSPF
+Настройка маршрутизаторов:
+1. Присвоение ip-адресов интерфейсам loopback
+R0(config)#int loopback 0
+R0(config-if)#ip adress 192.168.4.1 255.255.255.0
+
+2. Включение процесса ospf
+R0(config)#router ospf 1
+
+3. Объявление сетей
+  network 192.168.4.0 0.0.0.3 area 0
+ network 192.168.4.8 0.0.0.3 area 0
+ network 192.168.4.4 0.0.0.3 area 0
+
+Конфигурация роутер 0:
+Building configuration...
+
+Current configuration : 1352 bytes
+!
+version 15.1
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname R0
+!
+!
+!
+!
+!
+!
+!
+!
+no ip cef
+no ipv6 cef
+!
+!
+!
+!
+license udi pid CISCO2911/K9 sn FTX1524Q662-
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 192.168.100.1 255.255.255.255
+!
+interface GigabitEthernet0/0
+ ip address 192.168.1.254 255.255.255.0
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/1
+ ip address 192.168.10.126 255.255.255.128
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/2
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface GigabitEthernet0/0/0
+ ip address 10.0.0.1 255.255.255.0
+!
+interface GigabitEthernet0/1/0
+ ip address 11.0.0.1 255.255.255.0
+!
+interface GigabitEthernet0/2/0
+ ip address 192.168.4.1 255.255.255.252
+!
+interface GigabitEthernet0/3/0
+ no ip address
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+router ospf 1
+ log-adjacency-changes
+ network 192.168.10.0 0.0.0.127 area 0
+ network 192.168.1.0 0.0.0.127 area 0
+ network 192.168.1.0 0.0.0.255 area 0
+ network 192.168.4.0 0.0.0.3 area 0
+ network 0.0.0.0 255.255.255.255 area 0
+ network 11.0.0.0 0.0.0.255 area 0
+ network 10.0.0.0 0.0.0.255 area 0
+!
+ip classless
+!
+ip flow-export version 9
+!
+!
+!
+!
+!
+!
+!
+line con 0
+!
+line aux 0
+!
+line vty 0 4
+ login
+!
+!
+!
+end
+
+Конфигурация роутер 1
+R1#show run
+Building configuration...
+
+Current configuration : 1340 bytes
+!
+version 15.1
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname R1
+!
+!
+!
+!
+!
+!
+!
+!
+no ip cef
+no ipv6 cef
+!
+!
+!
+!
+license udi pid CISCO2911/K9 sn FTX1524A765-
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 192.168.100.2 255.255.255.255
+!
+interface GigabitEthernet0/0
+ ip address 192.168.2.254 255.255.255.0
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/1
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface GigabitEthernet0/2
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface GigabitEthernet0/0/0
+ ip address 10.0.0.2 255.255.255.0
+!
+interface GigabitEthernet0/1/0
+ ip address 192.168.4.6 255.255.255.252
+!
+interface GigabitEthernet0/2/0
+ ip address 12.0.0.2 255.255.255.0
+!
+interface GigabitEthernet0/3/0
+ ip address 13.0.0.2 255.0.0.0
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+router ospf 1
+ log-adjacency-changes
+ network 11.0.0.0 0.255.255.255 area 0
+ network 192.168.3.0 0.0.0.255 area 0
+ network 192.168.10.128 0.0.0.127 area 0
+ network 10.0.0.0 0.0.0.255 area 0
+ network 12.0.0.0 0.0.0.255 area 0
+ network 192.168.4.12 0.0.0.3 area 0
+ network 192.168.4.4 0.0.0.3 area 0
+!
+ip classless
+!
+ip flow-export version 9
+!
+!
+!
+!
+!
+!
+!
+line con 0
+!
+line aux 0
+!
+line vty 0 4
+ login
+!
+!
+!
+end
+
+Конфигурация роутер 3
+Router#
+%SYS-5-CONFIG_I: Configured from console by console
+
+Router#show run
+Building configuration...
+
+Current configuration : 1592 bytes
+!
+version 15.1
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname Router
+!
+!
+!
+!
+!
+!
+!
+!
+no ip cef
+no ipv6 cef
+!
+!
+!
+!
+license udi pid CISCO2911/K9 sn FTX1524QEKV-
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 192.168.100.4 255.255.255.255
+!
+interface GigabitEthernet0/0
+ ip address 192.168.220.62 255.255.255.192
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/1
+ ip address 192.168.220.110 255.255.255.240
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/2
+ no ip address
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/2.117
+ encapsulation dot1Q 117
+ ip address 192.168.117.254 255.255.255.0
+!
+interface GigabitEthernet0/2.123
+ encapsulation dot1Q 123
+ ip address 192.168.123.254 255.255.255.0
+!
+interface GigabitEthernet0/0/0
+ ip address 192.168.4.10 255.255.255.252
+!
+interface GigabitEthernet0/1/0
+ no ip address
+!
+interface GigabitEthernet0/2/0
+ ip address 14.0.0.1 255.255.255.0
+!
+interface GigabitEthernet0/3/0
+ ip address 13.0.0.1 255.255.255.0
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+router ospf 1
+ log-adjacency-changes
+ network 192.168.4.8 0.0.0.3 area 0
+ network 192.168.4.16 0.0.0.3 area 0
+ network 192.168.50.0 0.0.0.31 area 0
+ network 192.168.50.32 0.0.0.31 area 0
+ network 192.168.220.0 0.0.0.15 area 0
+ network 192.168.220.0 0.0.0.63 area 0
+ network 192.168.117.0 0.0.0.255 area 0
+ network 192.168.123.0 0.0.0.255 area 0
+!
+ip classless
+!
+ip flow-export version 9
+!
+!
+!
+!
+!
+!
+!
+line con 0
+!
+line aux 0
+!
+line vty 0 4
+ login
+!
+!
+!
+end
+
+
+Таблица маршрутизации Роутер0 после добавления сети двух новых подсетей:
+Gateway of last resort is not set
+
+     10.0.0.0/8 is variably subnetted, 2 subnets, 2 masks
+C       10.0.0.0/24 is directly connected, GigabitEthernet0/0/0
+L       10.0.0.1/32 is directly connected, GigabitEthernet0/0/0
+     11.0.0.0/8 is variably subnetted, 2 subnets, 2 masks
+C       11.0.0.0/24 is directly connected, GigabitEthernet0/1/0
+L       11.0.0.1/32 is directly connected, GigabitEthernet0/1/0
+     12.0.0.0/24 is subnetted, 1 subnets
+O       12.0.0.0/24 [110/2] via 11.0.0.2, 01:10:31, GigabitEthernet0/1/0
+     192.168.1.0/24 is variably subnetted, 2 subnets, 2 masks
+C       192.168.1.0/24 is directly connected, GigabitEthernet0/0
+L       192.168.1.254/32 is directly connected, GigabitEthernet0/0
+     192.168.4.0/24 is variably subnetted, 4 subnets, 2 masks
+C       192.168.4.0/30 is directly connected, GigabitEthernet0/2/0
+L       192.168.4.1/32 is directly connected, GigabitEthernet0/2/0
+O       192.168.4.4/30 [110/2] via 192.168.4.2, 00:53:52, GigabitEthernet0/2/0
+O       192.168.4.8/30 [110/2] via 192.168.4.2, 00:55:04, GigabitEthernet0/2/0
+     192.168.10.0/24 is variably subnetted, 2 subnets, 2 masks
+C       192.168.10.0/25 is directly connected, GigabitEthernet0/1
+L       192.168.10.126/32 is directly connected, GigabitEthernet0/1
+     192.168.100.0/32 is subnetted, 1 subnets
+C       192.168.100.1/32 is directly connected, Loopback0
+O    192.168.117.0/24 [110/3] via 192.168.4.2, 00:09:50, GigabitEthernet0/2/0
+O    192.168.123.0/24 [110/3] via 192.168.4.2, 00:09:40, GigabitEthernet0/2/0
+     192.168.220.0/26 is subnetted, 1 subnets
+O       192.168.220.0/26 [110/3] via 192.168.4.2, 00:55:04, GigabitEthernet0/2/0
+ 
